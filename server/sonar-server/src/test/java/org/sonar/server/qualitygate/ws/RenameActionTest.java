@@ -70,7 +70,7 @@ public class RenameActionTest {
   @Test
   public void rename() {
     logAsQualityGateAdminister();
-    QualityGateDto qualityGate = db.qualityGates().insertQualityGate(qg -> qg.setName("old name"));
+    QualityGateDto qualityGate = db.qualityGates().insertQualityGate(db.getDefaultOrganization(), qg -> qg.setName("old name"));
 
     ws.newRequest()
       .setParam("id", qualityGate.getId().toString())
@@ -83,7 +83,7 @@ public class RenameActionTest {
   @Test
   public void response_contains_quality_gate() {
     logAsQualityGateAdminister();
-    QualityGateDto qualityGate = db.qualityGates().insertQualityGate(qg -> qg.setName("old name"));
+    QualityGateDto qualityGate = db.qualityGates().insertQualityGate(db.getDefaultOrganization(), qg -> qg.setName("old name"));
 
     QualityGate result = ws.newRequest()
       .setParam("id", qualityGate.getId().toString())
@@ -97,7 +97,7 @@ public class RenameActionTest {
   @Test
   public void rename_with_same_name() {
     logAsQualityGateAdminister();
-    QualityGateDto qualityGate = db.qualityGates().insertQualityGate(qg -> qg.setName("name"));
+    QualityGateDto qualityGate = db.qualityGates().insertQualityGate(db.getDefaultOrganization(), qg -> qg.setName("name"));
 
     ws.newRequest()
       .setParam("id", qualityGate.getId().toString())
@@ -110,7 +110,7 @@ public class RenameActionTest {
   @Test
   public void fail_on_built_in_quality_gate() {
     logAsQualityGateAdminister();
-    QualityGateDto qualityGate = db.qualityGates().insertQualityGate(qg -> qg.setBuiltIn(true));
+    QualityGateDto qualityGate = db.qualityGates().insertQualityGate(db.getDefaultOrganization(), qg -> qg.setBuiltIn(true));
 
     expectedException.expect(IllegalArgumentException.class);
     expectedException.expectMessage(format("Operation forbidden for built-in Quality Gate '%s'", qualityGate.getName()));
@@ -124,7 +124,7 @@ public class RenameActionTest {
   @Test
   public void fail_on_empty_name() {
     logAsQualityGateAdminister();
-    QualityGateDto qualityGate = db.qualityGates().insertQualityGate();
+    QualityGateDto qualityGate = db.qualityGates().insertQualityGate(db.getDefaultOrganization());
 
     expectedException.expect(IllegalArgumentException.class);
     expectedException.expectMessage("Name can't be empty");
@@ -138,8 +138,8 @@ public class RenameActionTest {
   @Test
   public void fail_when_using_existing_name() {
     logAsQualityGateAdminister();
-    QualityGateDto qualityGate1 = db.qualityGates().insertQualityGate();
-    QualityGateDto qualityGate2 = db.qualityGates().insertQualityGate();
+    QualityGateDto qualityGate1 = db.qualityGates().insertQualityGate(db.getDefaultOrganization());
+    QualityGateDto qualityGate2 = db.qualityGates().insertQualityGate(db.getDefaultOrganization());
 
     expectedException.expect(IllegalArgumentException.class);
     expectedException.expectMessage(format("Name '%s' has already been taken", qualityGate2.getName()));
@@ -165,7 +165,7 @@ public class RenameActionTest {
   @Test
   public void fail_when_not_quality_gates_administer() {
     userSession.logIn("john").addPermission(ADMINISTER_QUALITY_PROFILES, defaultOrganizationProvider.get().getUuid());
-    QualityGateDto qualityGate = db.qualityGates().insertQualityGate(qg -> qg.setName("old name"));
+    QualityGateDto qualityGate = db.qualityGates().insertQualityGate(db.getDefaultOrganization(), qg -> qg.setName("old name"));
 
     expectedException.expect(ForbiddenException.class);
 

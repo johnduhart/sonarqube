@@ -37,7 +37,7 @@ import org.sonar.server.exceptions.NotFoundException;
 import org.sonar.server.qualitygate.QualityGateFinder;
 
 import static java.lang.String.format;
-import static org.sonar.server.qualitygate.QualityGates.SONAR_QUALITYGATE_PROPERTY;
+import static org.sonar.server.qualitygate.QualityGateFinder.SONAR_QUALITYGATE_PROPERTY;
 import static org.sonar.server.qualitygate.ws.QualityGatesWsParameters.ACTION_SELECT;
 import static org.sonar.server.qualitygate.ws.QualityGatesWsParameters.PARAM_GATE_ID;
 import static org.sonar.server.qualitygate.ws.QualityGatesWsParameters.PARAM_PROJECT_ID;
@@ -125,7 +125,7 @@ public class SelectAction implements QualityGatesWsAction {
 
     try {
       long dbId = Long.parseLong(projectId);
-      return Optional.ofNullable(dbClient.componentDao().selectById(dbSession, dbId).orNull());
+      return Optional.ofNullable(dbClient.componentDao().selectById(dbSession, dbId).orElse(null));
     } catch (NumberFormatException e) {
       return Optional.empty();
     }

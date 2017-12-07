@@ -60,7 +60,7 @@ public class QualityGateDaoTest {
 
   @Test
   public void associate() {
-    QualityGateDto qgate = db.qualityGates().insertQualityGate();
+    QualityGateDto qgate = db.qualityGates().insertQualityGate(db.getDefaultOrganization());
     OrganizationDto org = db.organizations().insert();
 
     underTest.associate(dbSession, Uuids.createFast(), org, qgate);
@@ -184,8 +184,8 @@ public class QualityGateDaoTest {
   }
 
   private void insertQualityGates() {
-    qualityGateDbTester.insertQualityGate(g -> g.setName("Very strict").setBuiltIn(false));
-    qualityGateDbTester.insertQualityGate(g -> g.setName("Balanced").setBuiltIn(false));
-    qualityGateDbTester.insertQualityGate(g -> g.setName("Lenient").setBuiltIn(false));
+    qualityGateDbTester.insertQualityGate(db.getDefaultOrganization(), g -> g.setName("Very strict").setBuiltIn(false));
+    qualityGateDbTester.insertQualityGate(db.getDefaultOrganization(), g -> g.setName("Balanced").setBuiltIn(false));
+    qualityGateDbTester.insertQualityGate(db.getDefaultOrganization(), g -> g.setName("Lenient").setBuiltIn(false));
   }
 }

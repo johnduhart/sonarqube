@@ -28,13 +28,16 @@ import org.sonar.api.web.UserRole;
 import org.sonar.db.DbClient;
 import org.sonar.db.DbSession;
 import org.sonar.db.component.ComponentDto;
+import org.sonar.db.organization.OrganizationDto;
 import org.sonar.db.qualitygate.QualityGateDto;
 import org.sonar.server.component.ComponentFinder;
+import org.sonar.server.exceptions.NotFoundException;
 import org.sonar.server.qualitygate.QualityGateFinder;
 import org.sonar.server.qualitygate.QualityGateFinder.QualityGateData;
 import org.sonar.server.user.UserSession;
 import org.sonarqube.ws.Qualitygates.GetByProjectResponse;
 
+import static java.lang.String.format;
 import static org.sonar.server.user.AbstractUserSession.insufficientPrivilegesException;
 import static org.sonar.server.ws.KeyExamples.KEY_PROJECT_EXAMPLE_001;
 import static org.sonar.server.ws.WsUtils.writeProtobuf;
@@ -90,8 +93,13 @@ public class GetByProjectAction implements QualityGatesWsAction {
         !userSession.hasComponentPermission(UserRole.ADMIN, project)) {
         throw insufficientPrivilegesException();
       }
+      Optional<OrganizationDto> organization = dbClient.organizationDao().selectByUuid(dbSession, project.getOrganizationUuid());
 
-      Optional<QualityGateData> data = qualityGateFinder.getQualityGate(dbSession, project.getId());
+      if (!organization.isPresent()) {
+        throw new NotFoundException(format("Organization [%s] is absent", project.getOrganizationUuid()));
+      }
+
+      Optional<QualityGateData> data = qualityGateFinder.getQualityGate(dbSession, organization.get(), project.getId());
 
       writeProtobuf(buildResponse(data), request, response);
     }

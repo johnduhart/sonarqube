@@ -35,7 +35,6 @@ import org.sonar.db.component.ComponentDbTester;
 import org.sonar.db.component.ComponentDto;
 import org.sonar.db.component.ComponentTesting;
 import org.sonar.db.organization.OrganizationDto;
-import org.sonar.db.property.PropertyDto;
 import org.sonar.db.qualitygate.QualityGateDto;
 import org.sonar.server.component.TestComponentFinder;
 import org.sonar.server.exceptions.ForbiddenException;
@@ -91,7 +90,7 @@ public class GetByProjectActionTest {
     OrganizationDto organizationDto = db.organizations().insert();
     ComponentDto project = componentDb.insertComponent(ComponentTesting.newPrivateProjectDto(organizationDto));
     QualityGateDto qualityGate = insertQualityGate("My team QG");
-    associateProjectToQualityGate(project.getId(), qualityGate.getId());
+    db.qualityGates().associateProjectToQualityGate(project, qualityGate);
     logInAsProjectUser(project);
 
     String result = ws.newRequest().setParam("project", project.getKey()).execute().getInput();
@@ -114,9 +113,10 @@ public class GetByProjectActionTest {
 
   @Test
   public void default_quality_gate() {
-    ComponentDto project = componentDb.insertComponent(ComponentTesting.newPrivateProjectDto(db.organizations().insert()));
-    QualityGateDto dbQualityGate = insertQualityGate("Sonar way");
-    setDefaultQualityGate(dbQualityGate.getId());
+    OrganizationDto organization = db.organizations().insert();
+    ComponentDto project = componentDb.insertComponent(ComponentTesting.newPrivateProjectDto(organization));
+    QualityGateDto dbQualityGate = db.qualityGates().insertQualityGate(organization);
+    db.qualityGates().setDefaultQualityGate(organization, dbQualityGate);
     logInAsProjectUser(project);
 
     GetByProjectResponse result = callByKey(project.getKey());
@@ -131,9 +131,9 @@ public class GetByProjectActionTest {
   public void project_quality_gate_over_default() {
     ComponentDto project = componentDb.insertComponent(ComponentTesting.newPrivateProjectDto(db.getDefaultOrganization()));
     QualityGateDto defaultDbQualityGate = insertQualityGate("Sonar way");
-    QualityGateDto dbQualityGate = insertQualityGate("My team QG");
-    setDefaultQualityGate(defaultDbQualityGate.getId());
-    associateProjectToQualityGate(project.getId(), dbQualityGate.getId());
+    QualityGateDto dbQualityGate = db.qualityGates().insertQualityGate(db.getDefaultOrganization());
+    db.qualityGates().setDefaultQualityGate(db.getDefaultOrganization(), dbQualityGate);
+    db.qualityGates().associateProjectToQualityGate(project, dbQualityGate);
     logInAsProjectUser(project);
 
     GetByProjectResponse result = callByKey(project.getKey());
@@ -146,8 +146,8 @@ public class GetByProjectActionTest {
   @Test
   public void get_by_project_key() {
     ComponentDto project = componentDb.insertComponent(ComponentTesting.newPrivateProjectDto(db.organizations().insert()));
-    QualityGateDto dbQualityGate = insertQualityGate("My team QG");
-    associateProjectToQualityGate(project.getId(), dbQualityGate.getId());
+    QualityGateDto dbQualityGate = db.qualityGates().insertQualityGate(db.getDefaultOrganization(), qg -> qg.setName("My team QG"));
+    db.qualityGates().associateProjectToQualityGate(project, dbQualityGate);
     logInAsProjectUser(project);
 
     GetByProjectResponse result = callByKey(project.getDbKey());
@@ -159,8 +159,8 @@ public class GetByProjectActionTest {
   public void get_with_project_admin_permission() {
     ComponentDto project = componentDb.insertPrivateProject();
     userSession.logIn().addProjectPermission(UserRole.ADMIN, project);
-    QualityGateDto dbQualityGate = insertQualityGate("Sonar way");
-    setDefaultQualityGate(dbQualityGate.getId());
+    QualityGateDto dbQualityGate = db.qualityGates().insertQualityGate(db.getDefaultOrganization());
+    db.qualityGates().setDefaultQualityGate(db.getDefaultOrganization(), dbQualityGate);
 
     GetByProjectResponse result = callByKey(project.getKey());
 
@@ -171,8 +171,8 @@ public class GetByProjectActionTest {
   public void get_with_project_user_permission() {
     ComponentDto project = componentDb.insertPrivateProject();
     userSession.logIn().addProjectPermission(UserRole.USER, project);
-    QualityGateDto dbQualityGate = insertQualityGate("Sonar way");
-    setDefaultQualityGate(dbQualityGate.getId());
+    QualityGateDto dbQualityGate = db.qualityGates().insertQualityGate(db.getDefaultOrganization());
+    db.qualityGates().setDefaultQualityGate(db.getDefaultOrganization(), dbQualityGate);
 
     GetByProjectResponse result = callByKey(project.getKey());
 
@@ -183,8 +183,8 @@ public class GetByProjectActionTest {
   public void fail_when_insufficient_permission() {
     ComponentDto project = componentDb.insertComponent(ComponentTesting.newPrivateProjectDto(db.getDefaultOrganization()));
     userSession.logIn();
-    QualityGateDto dbQualityGate = insertQualityGate("Sonar way");
-    setDefaultQualityGate(dbQualityGate.getId());
+    QualityGateDto dbQualityGate = db.qualityGates().insertQualityGate(db.getDefaultOrganization());
+    db.qualityGates().setDefaultQualityGate(db.getDefaultOrganization(), dbQualityGate);
 
     expectedException.expect(ForbiddenException.class);
 
@@ -234,21 +234,6 @@ public class GetByProjectActionTest {
     QualityGateDto qualityGate = dbClient.qualityGateDao().insert(dbSession, new QualityGateDto().setName(name).setUuid(Uuids.createFast()));
     db.commit();
     return qualityGate;
-  }
-
-  private void associateProjectToQualityGate(long componentId, long qualityGateId) {
-    dbClient.propertiesDao().saveProperty(dbSession, new PropertyDto()
-      .setKey("sonar.qualitygate")
-      .setResourceId(componentId)
-      .setValue(String.valueOf(qualityGateId)));
-    db.commit();
-  }
-
-  private void setDefaultQualityGate(long qualityGateId) {
-    dbClient.propertiesDao().saveProperty(dbSession, new PropertyDto()
-      .setKey("sonar.qualitygate")
-      .setValue(String.valueOf(qualityGateId)));
-    db.commit();
   }
 
   private void logInAsProjectUser(ComponentDto project) {

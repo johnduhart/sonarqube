@@ -76,7 +76,7 @@ public class DestroyActionTest {
   @Test
   public void delete_quality_gate() {
     userSession.addPermission(ADMINISTER_QUALITY_GATES, db.getDefaultOrganization());
-    QualityGateDto qualityGate = db.qualityGates().insertQualityGate();
+    QualityGateDto qualityGate = db.qualityGates().insertQualityGate(db.getDefaultOrganization());
     Long qualityGateId = qualityGate.getId();
     assertThat(db.getDbClient().qualityGateDao().selectById(dbSession, qualityGateId)).isNotNull();
 
@@ -115,8 +115,8 @@ public class DestroyActionTest {
   @Test
   public void delete_quality_gate_even_if_default() {
     userSession.addPermission(ADMINISTER_QUALITY_GATES, db.getDefaultOrganization());
-    QualityGateDto qualityGate = db.qualityGates().insertQualityGate(qg -> qg.setName("To Delete"));
-    db.qualityGates().setDefaultQualityGate(qualityGate);
+    QualityGateDto qualityGate = db.qualityGates().insertQualityGate(db.getDefaultOrganization(), qg -> qg.setName("To Delete"));
+    db.qualityGates().setDefaultQualityGate(db.getDefaultOrganization(), qualityGate);
     Long qualityGateId = qualityGate.getId();
 
     ws.newRequest()
@@ -129,12 +129,12 @@ public class DestroyActionTest {
   @Test
   public void delete_quality_gate_if_non_default_when_a_default_exist() {
     userSession.addPermission(ADMINISTER_QUALITY_GATES, db.getDefaultOrganization());
-    QualityGateDto qualityGate = db.qualityGates().insertQualityGate(qg -> qg.setName("To Delete"));
+    QualityGateDto qualityGate = db.qualityGates().insertQualityGate(db.getDefaultOrganization(), qg -> qg.setName("To Delete"));
     Long toDeleteQualityGateId = qualityGate.getId();
     assertThat(db.getDbClient().qualityGateDao().selectById(dbSession, toDeleteQualityGateId)).isNotNull();
 
-    QualityGateDto defaultQualityGate = db.qualityGates().insertQualityGate(qg -> qg.setName("Default"));
-    db.qualityGates().setDefaultQualityGate(defaultQualityGate);
+    QualityGateDto defaultQualityGate = db.qualityGates().insertQualityGate(db.getDefaultOrganization(), qg -> qg.setName("Default"));
+    db.qualityGates().setDefaultQualityGate(db.getDefaultOrganization(), defaultQualityGate);
 
     ws.newRequest()
       .setParam(PARAM_ID, valueOf(toDeleteQualityGateId))
@@ -146,7 +146,7 @@ public class DestroyActionTest {
   @Test
   public void does_not_delete_built_in_quality_gate() {
     userSession.addPermission(ADMINISTER_QUALITY_GATES, db.getDefaultOrganization());
-    QualityGateDto qualityGate = db.qualityGates().insertQualityGate(qg -> qg.setBuiltIn(true));
+    QualityGateDto qualityGate = db.qualityGates().insertQualityGate(db.getDefaultOrganization(), qg -> qg.setBuiltIn(true));
     Long qualityGateId = qualityGate.getId();
 
     expectedException.expect(IllegalArgumentException.class);
@@ -173,7 +173,7 @@ public class DestroyActionTest {
   @Test
   public void fail_when_not_quality_gates_administer() {
     userSession.logIn("john").addPermission(ADMINISTER_QUALITY_PROFILES, db.getDefaultOrganization());
-    QualityGateDto qualityGate = db.qualityGates().insertQualityGate(qg -> qg.setName("old name"));
+    QualityGateDto qualityGate = db.qualityGates().insertQualityGate(db.getDefaultOrganization(), qg -> qg.setName("old name"));
 
     expectedException.expect(ForbiddenException.class);
 
