@@ -1,0 +1,42 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`render 1`] = `
+<li
+  className="dropdown"
+>
+  <a
+    className="navbar-plus"
+    href="#"
+    onClick={[Function]}
+  >
+    <PlusIcon />
+  </a>
+  <ul
+    className="dropdown-menu dropdown-menu-right"
+  >
+    <li>
+      <a
+        className="js-new-project"
+        href="#"
+        onClick={[Function]}
+      >
+        <QualifierIcon
+          className="spacer-right"
+          qualifier="TRK"
+        />
+        Analyze new project
+      </a>
+    </li>
+    <li>
+      <Link
+        className="js-new-organization"
+        onlyActiveOnIndex={false}
+        style={Object {}}
+        to="/account/organizations/create"
+      >
+        Create new organization
+      </Link>
+    </li>
+  </ul>
+</li>
+`;

@@ -24,9 +24,11 @@ import GlobalNavBranding from './GlobalNavBranding';
 import GlobalNavMenu from './GlobalNavMenu';
 import GlobalNavExplore from './GlobalNavExplore';
 import GlobalNavUserContainer from './GlobalNavUserContainer';
+import GlobalNavPlus from './GlobalNavPlus';
 import Search from '../../search/Search';
 import GlobalHelp from '../../help/GlobalHelp';
 import * as theme from '../../../theme';
+import { isLoggedIn } from '../../../types';
 import NavBar from '../../../../components/nav/NavBar';
 import Tooltip from '../../../../components/controls/Tooltip';
 import HelpIcon from '../../../../components/icons-components/HelpIcon';
@@ -130,6 +132,9 @@ class GlobalNav extends React.PureComponent {
             </a>
           </li>
           <Search appState={this.props.appState} currentUser={this.props.currentUser} />
+          {isLoggedIn(this.props.currentUser) && (
+            <GlobalNavPlus openOnboardingTutorial={this.openOnboardingTutorial} />
+          )}
           <GlobalNavUserContainer {...this.props} />
         </ul>
 
