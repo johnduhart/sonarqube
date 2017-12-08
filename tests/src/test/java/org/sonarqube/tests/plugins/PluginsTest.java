@@ -90,9 +90,8 @@ public class PluginsTest {
     // FIXME abap is disabled as latest release is not using new license manager installPlugin(builder, "abap");
     // FIXME AEM Rules plugin is disabled because it is no more compatible with SonarQube 6.4 (ClassNotFoundException: com.google.common.base.Functions) installPlugin(builder, "aemrules");
     // FIXME needs to be compatible with SQ API 5.6+
-    //installPlugin(builder, "android");
-    // FIXME needs to be compatible with SQ API 5.6+
-    //installPlugin(builder, "authbitbucket");
+    installPlugin(builder, "android");
+    installPlugin(builder, "authbitbucket");
     installPlugin(builder, "authgithub");
     installPlugin(builder, "checkstyle");
     installPlugin(builder, "clover");
