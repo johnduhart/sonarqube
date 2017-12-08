@@ -30,7 +30,7 @@ public class CheckProperties {
   }
 
   public void start() {
-    if (settings.getBoolean("sonar.newKey").orElse(false)) {
+    if (!settings.getBoolean("sonar.newKey").orElse(false)) {
       throw new IllegalStateException("Property not found: sonar.newKey");
     }
   }
