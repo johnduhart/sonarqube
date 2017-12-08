@@ -211,18 +211,6 @@ public class RegisterQualityGatesTest {
   }
 
   @Test
-  public void ensure_only_that_builtin_is_set_as_default_when_no_default_quality_gate() {
-
-    underTest.start();
-
-    assertThat(qualityGateFinder.getBuiltInQualityGate(dbSession)).isNotNull();
-    assertThat(qualityGateFinder.getBuiltInQualityGate(dbSession).getId()).isEqualTo(builtInQG.getId());
-
-    assertThat(
-      logTester.logs(LoggerLevel.INFO).contains("Built-in quality gate [Sonar way] has been set as default")).isTrue();
-  }
-
-  @Test
   public void builtin_quality_gate_with_incorrect_metricId_should_not_throw_an_exception() {
     QualityGateConditionDto conditionDto = new QualityGateConditionDto()
       .setMetricId(-1) // This Id does not exist
