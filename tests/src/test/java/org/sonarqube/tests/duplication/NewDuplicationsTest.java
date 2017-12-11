@@ -51,10 +51,10 @@ public class NewDuplicationsTest {
     runProjectAnalysis(orchestrator, "duplications/new-duplications-v1",
       "sonar.projectDate", "2015-02-01",
       "sonar.scm.disabled", "false",
-      "sonar.verbose", "true");
+      "sonar.cpd.xoo.minimumTokens", "25");
     runProjectAnalysis(orchestrator, "duplications/new-duplications-v2",
       "sonar.scm.disabled", "false",
-      "sonar.verbose", "true");
+      "sonar.cpd.xoo.minimumTokens", "25");
   }
 
   @Test
