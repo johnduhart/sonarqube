@@ -90,13 +90,14 @@ public class PluginsTest {
     // FIXME abap is disabled as latest release is not using new license manager installPlugin(builder, "abap");
     // FIXME AEM Rules plugin is disabled because it is no more compatible with SonarQube 6.4 (ClassNotFoundException: com.google.common.base.Functions) installPlugin(builder, "aemrules");
     // FIXME needs to be compatible with SQ API 5.6+
-    installPlugin(builder, "android");
+    //installPlugin(builder, "android");
     installPlugin(builder, "authbitbucket");
     installPlugin(builder, "authgithub");
     installPlugin(builder, "checkstyle");
     installPlugin(builder, "clover");
     // FIXME cobol is disabled as latest release is not using new license manager installPlugin(builder, "cobol");
-    installPlugin(builder, "codecrackercsharp");
+    // FIXME needs to be compatible with SQ API 5.6+
+    //installPlugin(builder, "codecrackercsharp");
     // FIXME cpp is disabled as latest release is not using new license manager installPlugin(builder, "cpp");
     installPlugin(builder, "csharp");
     // FIXME css plugin is temporarily disabled as for the moment incompatible with the web plugin installPlugin(builder, "css");
@@ -136,18 +137,17 @@ public class PluginsTest {
     //installPlugin(builder, "python");
     installPlugin(builder, "rci");
     // FIXME rpg is disabled as latest release is not using new license manager installPlugin(builder, "rpg");
-    installPlugin(builder, "scmclearcase");
+    // FIXME needs to be compatible with SQ API 5.6+
+    //installPlugin(builder, "scmclearcase");
     // FIXME needs to be compatible with SQ API 5.6+
     //installPlugin(builder, "scmcvs");
-    // FIXME needs to be compatible with SQ API 5.6+
-    //installPlugin(builder, "scmgit");
+    installPlugin(builder, "scmgit");
     installPlugin(builder, "scmjazzrtc");
     installPlugin(builder, "scmmercurial");
     installPlugin(builder, "scmperforce");
     // FIXME needs to be compatible with SQ API 5.6+
     //installPlugin(builder, "scmsvn");
-    // FIXME needs to be compatible with SQ API 5.6+
-    //installPlugin(builder, "scmtfvc");
+    installPlugin(builder, "scmtfvc");
     installPlugin(builder, "softvis3d");
     installPlugin(builder, "sonargraphintegration");
     installPlugin(builder, "status");
