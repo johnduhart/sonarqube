@@ -1,0 +1,139 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`admin 1`] = `
+<ContextNavBar
+  height={72}
+  id="context-navigation"
+>
+  <Connect(OrganizationNavigationHeader)
+    organization={
+      Object {
+        "canAdmin": true,
+        "canDelete": true,
+        "key": "foo",
+        "name": "Foo",
+        "projectVisibility": "public",
+      }
+    }
+  />
+  <OrganizationNavigationMeta
+    organization={
+      Object {
+        "canAdmin": true,
+        "canDelete": true,
+        "key": "foo",
+        "name": "Foo",
+        "projectVisibility": "public",
+      }
+    }
+  />
+  <OrganizationNavigationMenu
+    location={
+      Object {
+        "pathname": "/organizations/foo",
+      }
+    }
+    organization={
+      Object {
+        "canAdmin": true,
+        "canDelete": true,
+        "key": "foo",
+        "name": "Foo",
+        "projectVisibility": "public",
+      }
+    }
+  />
+</ContextNavBar>
+`;
+
+exports[`regular user 1`] = `
+<ContextNavBar
+  height={72}
+  id="context-navigation"
+>
+  <Connect(OrganizationNavigationHeader)
+    organization={
+      Object {
+        "canAdmin": false,
+        "canDelete": false,
+        "key": "foo",
+        "name": "Foo",
+        "projectVisibility": "public",
+      }
+    }
+  />
+  <OrganizationNavigationMeta
+    organization={
+      Object {
+        "canAdmin": false,
+        "canDelete": false,
+        "key": "foo",
+        "name": "Foo",
+        "projectVisibility": "public",
+      }
+    }
+  />
+  <OrganizationNavigationMenu
+    location={
+      Object {
+        "pathname": "/organizations/foo",
+      }
+    }
+    organization={
+      Object {
+        "canAdmin": false,
+        "canDelete": false,
+        "key": "foo",
+        "name": "Foo",
+        "projectVisibility": "public",
+      }
+    }
+  />
+</ContextNavBar>
+`;
+
+exports[`undeletable org 1`] = `
+<ContextNavBar
+  height={72}
+  id="context-navigation"
+>
+  <Connect(OrganizationNavigationHeader)
+    organization={
+      Object {
+        "canAdmin": true,
+        "canDelete": false,
+        "key": "foo",
+        "name": "Foo",
+        "projectVisibility": "public",
+      }
+    }
+  />
+  <OrganizationNavigationMeta
+    organization={
+      Object {
+        "canAdmin": true,
+        "canDelete": false,
+        "key": "foo",
+        "name": "Foo",
+        "projectVisibility": "public",
+      }
+    }
+  />
+  <OrganizationNavigationMenu
+    location={
+      Object {
+        "pathname": "/organizations/foo",
+      }
+    }
+    organization={
+      Object {
+        "canAdmin": true,
+        "canDelete": false,
+        "key": "foo",
+        "name": "Foo",
+        "projectVisibility": "public",
+      }
+    }
+  />
+</ContextNavBar>
+`;
