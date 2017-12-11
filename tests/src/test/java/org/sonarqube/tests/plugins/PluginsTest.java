@@ -142,7 +142,8 @@ public class PluginsTest {
     // FIXME needs to be compatible with SQ API 5.6+
     //installPlugin(builder, "scmcvs");
     installPlugin(builder, "scmgit");
-    installPlugin(builder, "scmjazzrtc");
+    // FIXME needs to be compatible with SQ API 5.6+
+    //installPlugin(builder, "scmjazzrtc");
     installPlugin(builder, "scmmercurial");
     installPlugin(builder, "scmperforce");
     // FIXME needs to be compatible with SQ API 5.6+
