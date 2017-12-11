@@ -23,12 +23,14 @@ import * as PropTypes from 'prop-types';
 import GlobalLoading from './GlobalLoading';
 import { fetchCurrentUser } from '../../store/users/actions';
 import { fetchLanguages, fetchAppState } from '../../store/rootActions';
+import { fetchMyOrganizations } from '../../apps/account/organizations/actions';
 
 interface Props {
   children: JSX.Element;
   fetchAppState: () => Promise<any>;
   fetchCurrentUser: () => Promise<void>;
   fetchLanguages: () => Promise<void>;
+  fetchMyOrganizations: () => Promise<void>;
 }
 
 interface State {
@@ -66,7 +68,17 @@ class App extends React.PureComponent<Props, State> {
     this.props
       .fetchCurrentUser()
       .then(() => Promise.all([this.fetchAppState(), this.props.fetchLanguages()]))
-      .then(this.finishLoading, () => {});
+      .then(
+        ([appState]) => {
+          if (this.mounted) {
+            if (this.isOnSonarCloud(appState)) {
+              this.props.fetchMyOrganizations();
+            }
+            this.setState({ loading: false });
+          }
+        },
+        () => {}
+      );
   }
 
   componentWillUnmount() {
@@ -76,23 +88,18 @@ class App extends React.PureComponent<Props, State> {
   fetchAppState = () => {
     return this.props.fetchAppState().then(appState => {
       if (this.mounted) {
-        const onSonarCloud =
-          appState.settings !== undefined &&
-          appState.settings['sonar.sonarcloud.enabled'] === 'true';
         this.setState({
           branchesEnabled: appState.branchesEnabled,
           canAdmin: appState.canAdmin,
-          onSonarCloud
+          onSonarCloud: this.isOnSonarCloud(appState)
         });
       }
+      return appState;
     });
   };
 
-  finishLoading = () => {
-    if (this.mounted) {
-      this.setState({ loading: false });
-    }
-  };
+  isOnSonarCloud = (appState: any) =>
+    appState.settings !== undefined && appState.settings['sonar.sonarcloud.enabled'] === 'true';
 
   render() {
     if (this.state.loading) {
@@ -102,4 +109,9 @@ class App extends React.PureComponent<Props, State> {
   }
 }
 
-export default connect(null, { fetchAppState, fetchCurrentUser, fetchLanguages })(App as any);
+export default connect(null, {
+  fetchAppState,
+  fetchCurrentUser,
+  fetchLanguages,
+  fetchMyOrganizations
+})(App as any);

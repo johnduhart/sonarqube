@@ -23,7 +23,7 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router';
 import OrganizationsList from './OrganizationsList';
 import { translate } from '../../../helpers/l10n';
-import { fetchIfAnyoneCanCreateOrganizations, fetchMyOrganizations } from './actions';
+import { fetchIfAnyoneCanCreateOrganizations } from './actions';
 import { getAppState, getMyOrganizations, getGlobalSettingValue } from '../../../store/rootReducer';
 import { Organization } from '../../../app/types';
 
@@ -35,7 +35,6 @@ interface StateProps {
 
 interface DispatchProps {
   fetchIfAnyoneCanCreateOrganizations: () => Promise<void>;
-  fetchMyOrganizations: () => Promise<void>;
 }
 
 interface Props extends StateProps, DispatchProps {
@@ -52,10 +51,7 @@ class UserOrganizations extends React.PureComponent<Props, State> {
 
   componentDidMount() {
     this.mounted = true;
-    Promise.all([
-      this.props.fetchMyOrganizations(),
-      this.props.fetchIfAnyoneCanCreateOrganizations()
-    ]).then(this.stopLoading, this.stopLoading);
+    this.props.fetchIfAnyoneCanCreateOrganizations().then(this.stopLoading, this.stopLoading);
   }
 
   componentWillUnmount() {
@@ -117,7 +113,6 @@ const mapStateToProps = (state: any): StateProps => ({
 });
 
 const mapDispatchToProps = {
-  fetchMyOrganizations: fetchMyOrganizations as any,
   fetchIfAnyoneCanCreateOrganizations: fetchIfAnyoneCanCreateOrganizations as any
 } as DispatchProps;
 
